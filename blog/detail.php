@@ -18,6 +18,16 @@ if($_GET['id']){
 		echo "Blog Tidak Ditemukan";
 		die();
 	}
+
+	$blogs = [];
+	$sql = "SELECT blogs.*, users.name, users.email FROM blogs LEFT JOIN users ON users.id=blogs.user_id WHERE blogs.id != '$id' ORDER BY created_at DESC LIMIT 3";
+	$result = $connection->query($sql);
+
+	if($result->num_rows > 0){
+		while ($row = $result->fetch_assoc()) {
+			$blogs[] = $row;
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -42,7 +52,7 @@ if($_GET['id']){
 						<a class="nav-link" href="/index.php">Home <span class="sr-only">(current)</span></a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/blog.php">Blog</a>
+						<a class="nav-link" href="/blog">Blog</a>
 					</li>
 					<?php if($is_logged_in && $_SESSION['role'] == 'admin'): ?>
 						<li class="nav-item">
@@ -76,7 +86,7 @@ if($_GET['id']){
 
 	<div class="container my-4">
 		<div class="row">
-			<div class="col-md-7">
+			<div class="col-md-8">
 				<?php 
 				if($blog['image'] != null){
 					?>
@@ -97,11 +107,47 @@ if($_GET['id']){
 					<?= $blog['description']; ?>
 				</p>
 			</div>
+
+			<div class="col-md-4">
+				<h3>Blog Terkait</h3>
+				<hr>
+
+				<?php if(count($blogs) == 0): ?>
+					<div class="text-center">Tidak Ada Blog Terkait</div>	
+					<?php else: ?>
+						<?php foreach ($blogs as $key => $value): ?>
+							<div class="panel mb-2" style="border: 1px solid #ddd">
+								<div class="panel-body">
+									<div class="p-4">
+										<?php 
+										if($blog['image'] != null){
+											?>
+											<img style="height: 100px; object-fit: cover; width: 100%" src="../uploads/posts/<?= $value['image'] ?>" alt="Card image cap">
+											<?php 
+										}else{
+											?>
+											<img class="img-fluid" src="https://getuikit.com/v2/docs/images/placeholder_600x400.svg" alt="Card image cap">
+											<?php 
+										}
+										?>
+										<div class="mt-3">
+											<a href="/blog/detail.php?id=<?= $value['id'] ?>"><h5><?= $value['title'] ?></h5></a>
+										</div>
+										<hr>
+										<p>
+											<?= substr($value['description'],0,60); ?>...
+										</p>
+									</div>
+								</div>
+							</div>
+						<?php endforeach ?>
+					<?php endif; ?>
+				</div>
+			</div>
 		</div>
-	</div>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-</body>
-</html>
+	</body>
+	</html>

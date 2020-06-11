@@ -91,7 +91,7 @@ if($_SESSION['role'] != 'admin'){
 				if(count($blogs) == 0){
 					?>
 					<tr>
-						<td colspan="5" class="text-center">Belum ada data</td>
+						<td colspan="6" class="text-center">Belum ada data</td>
 					</tr>
 					<?php 
 				}else{

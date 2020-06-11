@@ -16,7 +16,8 @@ if($_SESSION['role'] != 'admin'){
 
 if($_GET['id']){
 	$id = $_GET['id'];
-	$sql = "SELECT * FROM blogs WHERE id = '$id'";
+	$user_id = $_SESSION['user_id'];
+	$sql = "SELECT * FROM blogs WHERE id = '$id' AND user_id = '$user_id'";
 	$result = $connection->query($sql);
 
 	if($result->num_rows > 0){
